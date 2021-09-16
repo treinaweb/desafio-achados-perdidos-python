@@ -2,13 +2,13 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from ..serializers import local_serializer
+from ..serializers import local_serializer, usuario_serializer
 from ..models import Local
 from ..permissions import dono_permission
 
 
 class LocalList(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         locais = Local.objects.filter(usuario_id=request.user.id)
