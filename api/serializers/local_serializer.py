@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ..models import Local, Usuario
-from ..serializers import usuario_serializer
+from ..serializers import usuario_serializer, editar_usuario_serializer
 from ..hateoas import Hateoas
 from django.urls import reverse
 
@@ -13,19 +13,13 @@ class LocalSerializer(serializers.ModelSerializer):
         model = Local
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     usuario = usuario_serializer.UsuarioSerializer(data=validated_data.pop('usuario'))
-    #     usuario.is_valid(raise_exception=True)
-    #     usuario_criado = usuario.save()
-    #     usuario_bd = Usuario.objects.get(email=usuario_criado)
-    #     local = Local.objects.create(usuario_id=usuario_bd.id, **validated_data)
-    #     return local
-    #
-    # def update(self, instance, validated_data):
-    #     usuario_bd = Usuario.objects.get(email=instance.usuario.email)
-    #     serializer_usuario = usuario_serializer.UsuarioSerializer(instance=usuario_bd, data=validated_data.pop('usuario'), partial=True)
-    #     serializer_usuario.is_valid(raise_exception=True)
-    #     serializer_usuario.save()
+    def create(self, validated_data):
+        usuario = usuario_serializer.UsuarioSerializer(data=validated_data.pop('usuario'))
+        usuario.is_valid(raise_exception=True)
+        usuario_criado = usuario.save()
+        usuario_bd = Usuario.objects.get(email=usuario_criado)
+        local = Local.objects.create(usuario_id=usuario_bd.id, **validated_data)
+        return local
 
     def get_links(self, obj):
         links = Hateoas()

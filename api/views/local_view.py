@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from ..serializers import local_serializer, usuario_serializer
+from ..serializers import local_serializer, usuario_serializer, editar_local_serializer
 from ..models import Local
 from ..permissions import dono_permission
 
@@ -24,7 +24,7 @@ class LocalList(APIView):
 
 
 class LocalDetalhes(APIView):
-    permission_classes = [dono_permission.DonoPermission, ]
+    # permission_classes = [dono_permission.DonoPermission, ]
 
     def get(self, request, local_id, format=None):
         local = Local.objects.get(id=local_id)
@@ -34,8 +34,8 @@ class LocalDetalhes(APIView):
 
     def put(self, request, local_id, format=None):
         local_antigo = Local.objects.get(id=local_id)
-        self.check_object_permissions(request, local_antigo)
-        serializer = local_serializer.LocalSerializer(instance=local_antigo, data=request.data)
+        # self.check_object_permissions(request, local_antigo)
+        serializer = editar_local_serializer.EditarLocalSerializer(instance=local_antigo, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
