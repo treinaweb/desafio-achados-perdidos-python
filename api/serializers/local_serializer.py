@@ -4,10 +4,17 @@ from ..serializers import usuario_serializer, editar_usuario_serializer
 from ..hateoas import Hateoas
 from django.urls import reverse
 
+class LocalUsuarioSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    password_confirmation = serializers.CharField(write_only=True, required=True)
 
+    class Meta:
+        model = Usuario
+        fields = ('id', 'nome', 'email', 'password', 'password_confirmation')
 
 class LocalSerializer(serializers.ModelSerializer):
-    usuario = usuario_serializer.UsuarioSerializer()
+    usuario = LocalUsuarioSerializer(many=False)
+    links = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Local
@@ -24,25 +31,9 @@ class LocalSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         links = Hateoas()
         links.add_get('self', reverse('local-list'))
-        links.add_put('atualizar_local', reverse('local-detalhes', kwargs={'local_id': obj.id}))
-        links.add_delete('apagar_local', reverse('local-detalhes', kwargs={'local_id': obj.id}))
+        links.add_put('atualizar_local', reverse('local-list'))
+        links.add_delete('apagar_local', reverse('local-list'))
         links.add_post('definir_imagem_local', reverse('imagem-local-detalhes'))
         links.add_get('listar_objetos_local', reverse('objetos-local', kwargs={'local_id': obj.id}))
         links.add_post('adicionar_objeto_local', reverse('objeto-list'))
         return links.to_array()
-
-    # def to_representation(self, obj):
-    #     usuario = Usuario.objects.get(id=obj.usuario.id)
-    #     serializer_usuario = usuario_serializer.UsuarioSerializer(usuario)
-    #     return {
-    #         'local': {
-    #             'id': obj.id,
-    #             'nome': obj.nome,
-    #             'endereco': obj.endereco,
-    #             'contato': obj.contato,
-    #             'descricao': obj.descricao,
-    #             'imagem': obj.imagem_local or None
-    #         },
-    #         'usuario': serializer_usuario.data,
-    #         'links': self.get_links(obj)
-    #     }

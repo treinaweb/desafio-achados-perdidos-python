@@ -10,11 +10,11 @@ class ImagemObjetoList(APIView):
 
     def post(self, request, objeto_id, format=None):
         objeto = Objeto.objects.get(id=objeto_id)
-        self.check_object_permissions(request, objeto)
+        # self.check_object_permissions(request, objeto)
         serializer_imagem_objeto = imagem_objeto_serializer.ImagemObjetoSerializer(data=request.data, context={'request': request})
         if serializer_imagem_objeto.is_valid():
             imagem_objeto = serializer_imagem_objeto.validated_data["imagem_objeto"]
-            objeto.imagem_objeto = imagem_objeto
+            objeto.imagem = imagem_objeto
             objeto.save()
             return Response("Imagem cadastrada com sucesso", status=status.HTTP_200_OK)
         return Response(serializer_imagem_objeto.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -9,6 +9,6 @@ from ..permissions import dono_permission
 
 class ObjetosLocalID(APIView):
     def get(self, request, local_id, format=None):
-        objetos = Objeto.objects.filter(local_id=local_id)
+        objetos = Objeto.objects.filter(local_id=local_id, entregue=False)
         serializer = objeto_serializer.ObjetoSerializer(objetos, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -14,7 +14,7 @@ class ImagemLocalList(APIView):
         serializer_imagem_local = imagem_local_serializer.ImagemLocalSerializer(data=request.data, context={'request': request})
         if serializer_imagem_local.is_valid():
             imagem_local = serializer_imagem_local.validated_data["imagem_local"]
-            local.imagem_local = imagem_local
+            local.imagem = imagem_local
             local.save()
             return Response("Imagem cadastrada com sucesso", status=status.HTTP_200_OK)
         return Response(serializer_imagem_local.errors, status=status.HTTP_400_BAD_REQUEST)

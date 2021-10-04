@@ -8,9 +8,9 @@ from ..permissions import dono_permission
 
 
 class ObjetosDonoID(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    def patch(self, request, objeto_id, format=None):
+    def post(self, request, objeto_id, format=None):
         objeto = Objeto.objects.get(id=objeto_id)
         serializer = objeto_dono_serializer.ObjetoDonoSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():

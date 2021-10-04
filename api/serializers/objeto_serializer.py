@@ -6,13 +6,12 @@ from ..hateoas import Hateoas
 
 
 class ObjetoSerializer(serializers.ModelSerializer):
-    # links = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
     entregue = serializers.BooleanField(read_only=True)
-    local = local_serializer.LocalSerializer(read_only=True)
 
     class Meta:
         model = Objeto
-        fields = '__all__'
+        exclude = ('local', 'dono_nome', 'dono_cpf', 'imagem')
 
     def create(self, validated_data):
         usuario = self.context['request'].user.id
@@ -23,9 +22,9 @@ class ObjetoSerializer(serializers.ModelSerializer):
 
     def get_links(self, obj):
         links = Hateoas()
-        links.add_get('self', reverse('objeto-list'))
+        links.add_get('self', reverse('objeto-detalhes', kwargs={'objeto_id': obj.id}))
         links.add_put('atualizar_objeto', reverse('objeto-detalhes', kwargs={'objeto_id': obj.id}))
         links.add_delete('apagar_objeto', reverse('objeto-detalhes', kwargs={'objeto_id': obj.id}))
         links.add_post('definir_imagem_objeto', reverse('imagem-objeto-detalhes', kwargs={'objeto_id': obj.id}))
-        links.add_post('definir_dono_objeto', reverse('objeto-list', kwargs={'objeto_id': obj.id}))
+        links.add_post('definir_dono_objeto', reverse('objeto-dono-detalhes', kwargs={'objeto_id': obj.id}))
         return links.to_array()
